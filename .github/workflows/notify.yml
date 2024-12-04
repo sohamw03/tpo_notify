@@ -1,0 +1,37 @@
+name: TPO Notification Cron Job
+
+on:
+  # schedule:
+  #   - cron: '*/30 * * * *'  # Runs every 30 minutes
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+
+    - name: Install dependencies
+      run: poetry install
+
+    - name: Setup Chrome
+      uses: browser-actions/setup-chrome@latest
+
+    - name: Create .env file
+      run: |
+        echo "URL=${{ secrets.URL }}" > .env
+        echo "U=${{ secrets.U }}" >> .env
+        echo "P=${{ secrets.P }}" >> .env
+
+    - name: Run script
+      run: poetry run python notify.py
