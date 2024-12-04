@@ -11,7 +11,7 @@ def setup_driver():
     # Initialize Chrome driver
     options = webdriver.ChromeOptions()
     # Add any additional options if needed
-    # options.add_argument('--headless')  # Uncomment to run in headless mode
+    options.add_argument('--headless')  # Uncomment to run in headless mode
     driver = webdriver.Chrome(options=options)
     return driver
 
