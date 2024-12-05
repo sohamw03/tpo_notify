@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.11"
 selenium = "^4.27.1"
 python-dotenv = "^1.0.1"
+pymongo = "^4.10.1"
+resend = "^2.4.0"
 
 
 [build-system]

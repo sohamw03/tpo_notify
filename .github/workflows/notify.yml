@@ -1,8 +1,8 @@
 name: TPO Notification Cron Job
 
 on:
-  # schedule:
-  #   - cron: '*/30 * * * *'  # Runs every 30 minutes
+  schedule:
+    - cron: '0 * * * *'  # Runs every hour
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
