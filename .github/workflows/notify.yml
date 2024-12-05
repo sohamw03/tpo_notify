@@ -32,6 +32,9 @@ jobs:
         echo "URL=${{ secrets.URL }}" > .env
         echo "U=${{ secrets.U }}" >> .env
         echo "P=${{ secrets.P }}" >> .env
+        echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> .env
+        echo "RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}" >> .env
+        echo "EMAIL=${{ secrets.EMAIL }}" >> .env
 
     - name: Run script
       run: poetry run python notify.py
