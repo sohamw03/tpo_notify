@@ -8,6 +8,8 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
+    env:
+      TZ: 'Asia/Kolkata'
 
     steps:
     - uses: actions/checkout@v3
