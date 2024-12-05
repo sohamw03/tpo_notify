@@ -34,10 +34,14 @@ def update_collection(collection, new_data):
         collection.insert_many(new_data)
 
 def send_email(card_data):
+    from datetime import datetime
     resend.api_key = os.getenv('RESEND_API_KEY', '')
 
+    # Add timestamp with only hour and minute
+    timestamp = datetime.now().strftime("%H:%M")
+
     if len(card_data) == 1 and isinstance(card_data[0], str):
-        subject = "TPO Update: No Companies Available"
+        subject = f"TPO Update: No Companies Available [{timestamp}]"
         html_content = """
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2 style="color: #e74c3c;">TPO Status Update</h2>
@@ -45,7 +49,7 @@ def send_email(card_data):
         </div>
         """
     else:
-        subject = "TPO Update: New Companies Available"
+        subject = f"TPO Update: New Companies Available [{timestamp}]"
         companies_html = ""
         for company in card_data:
             companies_html += f"""
