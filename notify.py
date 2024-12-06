@@ -30,7 +30,7 @@ def get_existing_data(collection):
 
 def update_collection(collection, new_data):
     clear_collection(collection)
-    if new_data and not isinstance(new_data[0], str) and not len(new_data) == 1:
+    if new_data and not isinstance(new_data[0], str):
         collection.insert_many(new_data)
 
 def send_email(card_data):
