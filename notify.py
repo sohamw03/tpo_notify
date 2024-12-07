@@ -139,6 +139,7 @@ def navigate_and_extract(driver):
             temp_data = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".v-alert__content")))
             if temp_data.is_displayed() and "No Schedule Company Found." in temp_data.text:
                 card_data.append(temp_data.text)
+                return card_data
         except Exception as e:
             print("No alert found:")
 
