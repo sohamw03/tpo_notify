@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from dotenv import load_dotenv
-import os
+import os, json
 from pymongo import MongoClient
 import resend
 load_dotenv()
@@ -14,6 +14,7 @@ def setup_driver():
     options = webdriver.ChromeOptions()
     # Add any additional options if needed
     options.add_argument('--headless')  # Uncomment to run in headless mode
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(options=options)
     return driver
 
@@ -107,7 +108,7 @@ def login(driver, url, username, password):
         driver.get(url)
 
         # Wait for login form elements to be present (adjust selectors as needed)
-        username_field = WebDriverWait(driver, 10).until(
+        username_field = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.ID, "input-15"))  # Replace with actual ID
         )
         password_field = driver.find_element(By.ID, "input-18")  # Replace with actual ID
@@ -125,10 +126,25 @@ def login(driver, url, username, password):
         print("Timeout while trying to log in")
         return False
 
+def logout(driver):
+    try:
+        profile_button = WebDriverWait(driver, 5).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "#app > div > header > div.v-toolbar__content > div.text-center > button"))
+        )
+        profile_button.click()
+
+        logout_button = driver.find_element(By.CSS_SELECTOR, "#app > div.v-menu__content.theme--light.v-menu__content--fixed.menuable__content__active > div > div.v-card__actions > button[title='logout']")
+        logout_button.click()
+
+        # Stall for a few seconds to keep browser open
+        driver.implicitly_wait(5)
+    except TimeoutException:
+        print("Timeout while trying to log out")
+
 def navigate_and_extract(driver):
     try:
         # Wait for and click the desired tab
-        tab = WebDriverWait(driver, 10).until(
+        tab = WebDriverWait(driver, 5).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "a[href='/apply_company']>div.v-list-item"))  # Replace with actual selector
         )
         tab.click()
@@ -136,14 +152,14 @@ def navigate_and_extract(driver):
         card_data = []
         try:
             # Check if there are no companies
-            temp_data = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".v-alert__content")))
+            temp_data = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".v-alert__content")))
             if temp_data.is_displayed() and "No Schedule Company Found." in temp_data.text:
                 card_data.append(temp_data.text)
         except Exception as e:
-            print("No alert found:")
+            print("No alert found")
 
         # Wait for cards to load
-        cards = WebDriverWait(driver, 10).until(
+        cards = WebDriverWait(driver, 5).until(
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#app > div > main > div > div > div > div:nth-child(2) > div:nth-child(1) > *"))
         )
 
@@ -174,7 +190,8 @@ def main():
             collection = setup_db()
             card_data = navigate_and_extract(driver)
             check_and_notify(collection, card_data)
-            print("Extracted data:", card_data)
+            print("Extracted data:\n", json.dumps(card_data, indent=2))
+            logout(driver)
         else:
             print("Login failed")
 
