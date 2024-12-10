@@ -31,7 +31,7 @@ def get_existing_data(collection):
 
 def update_collection(collection, new_data):
     clear_collection(collection)
-    if new_data and not isinstance(new_data[0], str) and not len(new_data) == 1:
+    if new_data and not isinstance(new_data[0], str):
         collection.insert_many(new_data)
 
 def send_email(card_data):
@@ -155,6 +155,7 @@ def navigate_and_extract(driver):
             temp_data = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".v-alert__content")))
             if temp_data.is_displayed() and "No Schedule Company Found." in temp_data.text:
                 card_data.append(temp_data.text)
+                return card_data
         except Exception as e:
             print("No alert found")
 
