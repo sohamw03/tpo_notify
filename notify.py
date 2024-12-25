@@ -191,7 +191,7 @@ def main():
             collection = setup_db()
             card_data = navigate_and_extract(driver)
             check_and_notify(collection, card_data)
-            print("Extracted data:\n", json.dumps(card_data, indent=2))
+            print("Extracted data:\n", json.dumps(card_data, indent=2, default=str))
             logout(driver)
         else:
             print("Login failed")
