@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from dotenv import load_dotenv
-import os, json
+import os, json, requests
 from pymongo import MongoClient
 import resend
 load_dotenv()
@@ -14,6 +14,7 @@ def setup_driver():
     options = webdriver.ChromeOptions()
     # Add any additional options if needed
     options.add_argument('--headless')  # Uncomment to run in headless mode
+    options.add_argument("--start-maximized")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(options=options)
     return driver
@@ -49,6 +50,7 @@ def send_email(card_data):
             <p style="color: #7f8c8d; font-size: 16px;">All company listings have been cleared.</p>
         </div>
         """
+        payload = "All company listings have been cleared."
     else:
         subject = f"TPO Update: New Companies Available [{timestamp}]"
         companies_html = ""
@@ -74,6 +76,7 @@ def send_email(card_data):
             </p>
         </div>
         """
+        payload = "New Companies Posted\n" + "".join([f"{company['title']} - {company['description']}\n📋 {company['type']} - 🗓️ {company['date']}\n\n" for company in card_data])
 
     params = {
         "from": "TPO Notifications <notifications@resend.dev>",
@@ -87,6 +90,14 @@ def send_email(card_data):
         print("Email notification sent successfully")
     except Exception as e:
         print(f"Failed to send email: {e}")
+
+    # Send macrodroid notification
+    try:
+        response = requests.get(f"{os.getenv('MACRODROID_WEBHOOK_URL', '')}?desc={payload}")
+        if response.status_code == 200:
+            print("Macrodroid notification sent successfully")
+    except Exception as e:
+        print(f"Failed to send Macrodroid notification: {e}")
 
 def check_and_notify(collection, card_data):
     existing_data = get_existing_data(collection)
