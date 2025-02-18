@@ -189,7 +189,8 @@ def navigate_and_extract(driver):
 
     except Exception as e:
         print("Error while trying to extract card information:")
-        return []
+        logout(driver)
+        raise e
 
 def main():
     driver = setup_driver()
