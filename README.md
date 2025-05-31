@@ -16,12 +16,17 @@ An automated notification system for Training and Placement Office (TPO) portal 
 - [Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/)
 - [MongoDB](https://www.mongodb.com/)
 - [Resend](https://resend.com/) (for email notifications)
-- [Poetry](https://python-poetry.org/) (dependency management)
+- [UV](https://docs.astral.sh/uv/) (dependency management)
 
 ## Prerequisites
 
 1. Install [Python 3.11](https://www.python.org/downloads/) or higher
-2. Install [Poetry](https://python-poetry.org/docs/#installation)
+2. Install [UV]
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   exec bash
+   uv sync
+   ```
 3. Install [Chrome browser](https://www.google.com/chrome/)
 4. Create accounts on:
    - [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register)
